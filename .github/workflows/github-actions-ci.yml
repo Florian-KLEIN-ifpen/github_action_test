@@ -26,6 +26,10 @@ jobs:
           echo $HTTP_PROXY
           echo $HTTPS_PROXY
           echo $NO_PROXY
+      - name: Clone repo
+        run: |
+          git clone https://github.com/Florian-KLEIN-ifpen/github_action_test.git repo
+          cd repo
 #      - uses: actions/checkout@v3
       - name: Install ruff
         run: pip install ruff
