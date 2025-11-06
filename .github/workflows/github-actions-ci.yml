@@ -27,14 +27,6 @@ jobs:
     steps:
       - name: Setup proxy
         run: |
-          curl -v --connect-timeout 5 http://isproxy.ifpen.fr:8082/
-
-          # Basic TCP test
-          nc -vz isproxy.ifpen.fr 8082
-
-          # Or using curl
-          curl -v --proxy "http://username:password@isproxy.ifpen.fr:8082" https://github.com
-
           git config --global http.proxy "$HTTP_PROXY"
           git config --global https.proxy "$HTTPS_PROXY"
       - name: Clone the repository
