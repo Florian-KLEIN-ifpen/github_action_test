@@ -26,7 +26,7 @@ jobs:
           echo $HTTP_PROXY
           echo $HTTPS_PROXY
           echo $NO_PROXY
-      - uses: actions/checkout@v3
+#      - uses: actions/checkout@v3
       - name: Install ruff
         run: pip install ruff
       - name: Run ruff formatting check
