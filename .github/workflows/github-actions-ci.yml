@@ -21,6 +21,11 @@ jobs:
       image: harbor.ifpen.fr/fast-it/python:${{ vars.PYTHON_VERSION }}-slim
     if: github.ref != 'refs/heads/develop' || github.event_name != 'workflow_dispatch'
     steps:
+      - name: Check proxy
+        run: |
+          echo $HTTP_PROXY
+          echo $HTTPS_PROXY
+          echo $NO_PROXY
       - uses: actions/checkout@v3
       - name: Install ruff
         run: pip install ruff
