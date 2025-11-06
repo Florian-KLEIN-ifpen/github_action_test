@@ -27,9 +27,7 @@ jobs:
     steps:
       - name: Check proxy
         run: |
-          echo "$HTTP_PROXY"
-          echo "$HTTPS_PROXY"
-          echo "$NO_PROXY"
+          env | grep -i proxy
       - uses: actions/checkout@v3
       - name: Install ruff
         run: pip install ruff
