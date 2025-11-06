@@ -20,9 +20,11 @@ jobs:
     container:
       image: harbor.ifpen.fr/fast-it/python:${{ vars.PYTHON_VERSION }}-slim
       env:
-        NO_PROXY: .ifp.fr,.ifpen.fr,localhost,127.0.0.1
+        no_proxy: .ifp.fr,.ifpen.fr,localhost,127.0.0.1
         HTTPS_PROXY: http://${{ secrets.PROXY_USERNAME }}:${{ secrets.PROXY_PASSWORD }}@isproxy.ifpen.fr:8082
         HTTP_PROXY: http://${{ secrets.PROXY_USERNAME }}:${{ secrets.PROXY_PASSWORD }}@isproxy.ifpen.fr:8082
+        http_proxy: http://${{ secrets.PROXY_USERNAME }}:${{ secrets.PROXY_PASSWORD }}@isproxy.ifpen.fr:8082
+        https_proxy: http://${{ secrets.PROXY_USERNAME }}:${{ secrets.PROXY_PASSWORD }}@isproxy.ifpen.fr:8082
     if: github.ref != 'refs/heads/develop' || github.event_name != 'workflow_dispatch'
     steps:
       - name: Setup proxy
