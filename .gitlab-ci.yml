@@ -1,0 +1,25 @@
+# Definition des variables du CI/CD
+variables:
+  PYTHON_VERSION: "3.12"
+  UPLOAD_REPOSITORY: "https://nexus.ifpen.fr/repository/fast-it/"
+  PYTHON_PATH: "src"
+  CLUSTER: "IFPEN"
+  GITLAB_API_URL: "https://gitlab.ifpen.fr/api/v4"
+  PROJECT_ID: $CI_PROJECT_ID
+  PROJECT_NAME: $CI_PROJECT_NAME
+
+include:
+  - project: 'fast-it/ci-cd/templates-ci-cd'
+    file: '/ruff_guardian.yml'
+  - project: 'fast-it/ci-cd/templates-ci-cd'
+    file: '/pytest.yml'
+  - project: 'fast-it/ci-cd/templates-ci-cd'
+    file: '/sphinx_python_generator.yml'
+  - project: 'fast-it/ci-cd/templates-ci-cd'
+    file: '/py_package_uploader.yml'
+
+stages:
+  - ruff_guardian
+  - pytest
+  - pages
+  - py_package_uploader
