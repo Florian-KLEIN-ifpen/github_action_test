@@ -27,9 +27,11 @@ jobs:
     steps:
       - name: Setup proxy
         run: |
+          ping isproxy.ifpen.fr
+
           # Basic TCP test
           nc -vz isproxy.ifpen.fr 8082
-          
+
           # Or using curl
           curl -v --proxy "http://username:password@isproxy.ifpen.fr:8082" https://github.com
 
