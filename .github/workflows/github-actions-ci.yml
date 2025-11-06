@@ -16,7 +16,7 @@ env:
 
 jobs:
   ruff_guardian:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     container:
       image: python:3.12.12-slim
     if: github.ref != 'refs/heads/develop' || github.event_name != 'workflow_dispatch'
