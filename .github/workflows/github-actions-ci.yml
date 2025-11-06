@@ -28,6 +28,8 @@ jobs:
       - name: Check proxy
         run: |
           env | grep -i proxy
+          git config --get http.proxy
+          git config --get https.proxy
       - uses: actions/checkout@v3
       - name: Install ruff
         run: pip install ruff
