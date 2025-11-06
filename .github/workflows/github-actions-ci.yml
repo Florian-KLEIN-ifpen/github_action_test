@@ -12,8 +12,6 @@ on:
 
 env:
   PIP_EXTRA_INDEX_URL_OVERRIDE: "https://nexus.fastit.dev/repository/fast-it/simple https://nexus.ifpen.fr/repository/fast-it/simple"
-
-vars:
   PYTHON_VERSION: 3.12
 
 
@@ -21,7 +19,7 @@ jobs:
   ruff_guardian:
     runs-on: ubuntu-latest
     container:
-      image: harbor.ifpen.fr/fast-it/python:${{ vars.PYTHON_VERSION }}-slim
+      image: harbor.ifpen.fr/fast-it/python:${{ $PYTHON_VERSION }}-slim
     if: github.ref != 'refs/heads/develop' || github.event_name != 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v3
