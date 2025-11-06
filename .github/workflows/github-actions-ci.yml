@@ -27,10 +27,7 @@ jobs:
         run: pip install ruff
       - name: Run ruff formatting check
         run: |
-          if ! ruff format --check .; then
-            ruff format .
-            exit 1
-          fi
+          if ! ruff format --check .; then ruff format .; false; fi
 
 #  pytest:
 #    runs-on: ubuntu-latest
