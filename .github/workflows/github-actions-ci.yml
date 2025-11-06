@@ -11,6 +11,14 @@ on:
   pull_request:
 
 env:
+  NO_PROXY: .ifp.fr,.ifpen.fr,localhost,127.0.0.1
+  HTTPS_PROXY: http://${{ secrets.PROXY_USERNAME }}:${{ secrets.PROXY_PASSWORD }}isproxy.ifpen.fr:8082
+  HTTP_PROXY: http://${{ secrets.PROXY_USERNAME }}:${{ secrets.PROXY_PASSWORD }}isproxy.ifpen.fr:8082
+
+  no_proxy: .ifp.fr,.ifpen.fr,localhost,127.0.0.1
+  https_proxy: http://${{ secrets.PROXY_USERNAME }}:${{ secrets.PROXY_PASSWORD }}isproxy.ifpen.fr:8082
+  http_proxy: http://${{ secrets.PROXY_USERNAME }}:${{ secrets.PROXY_PASSWORD }}isproxy.ifpen.fr:8082
+
   PIP_EXTRA_INDEX_URL_OVERRIDE: "https://nexus.fastit.dev/repository/fast-it/simple https://nexus.ifpen.fr/repository/fast-it/simple"
 
 
@@ -26,11 +34,7 @@ jobs:
           echo $HTTP_PROXY
           echo $HTTPS_PROXY
           echo $NO_PROXY
-      - name: Clone repo
-        run: |
-          git clone https://github.com/Florian-KLEIN-ifpen/github_action_test.git repo
-          cd repo
-#      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
       - name: Install ruff
         run: pip install ruff
       - name: Run ruff formatting check
