@@ -27,7 +27,7 @@ jobs:
     steps:
       - name: Setup proxy
         run: |
-          ping isproxy.ifpen.fr
+          curl -v --connect-timeout 5 http://isproxy.ifpen.fr:8082/
 
           # Basic TCP test
           nc -vz isproxy.ifpen.fr 8082
