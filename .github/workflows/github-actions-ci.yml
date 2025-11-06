@@ -30,9 +30,6 @@ jobs:
           git config --global http.proxy "$HTTP_PROXY"
           git config --global https.proxy "$HTTPS_PROXY"
       - name: Clone the repository
-        run: |
-          git config --get http.proxy
-          git config --get https.proxy
         uses: actions/checkout@v3
       - name: Install ruff
         run: pip install ruff
