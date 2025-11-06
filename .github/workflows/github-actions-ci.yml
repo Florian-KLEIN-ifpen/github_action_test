@@ -27,6 +27,7 @@ jobs:
     steps:
       - name: Setup proxy
         run: |
+          ping -c 5 $HTTP_PROXY
           git config --global http.proxy "$HTTP_PROXY"
           git config --global https.proxy "$HTTPS_PROXY"
       - name: Clone the repository
