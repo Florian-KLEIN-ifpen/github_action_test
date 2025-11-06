@@ -11,10 +11,6 @@ on:
   pull_request:
 
 env:
-  NO_PROXY: .ifp.fr,.ifpen.fr,localhost,127.0.0.1
-  HTTPS_PROXY: http://${{ secrets.PROXY_USERNAME }}:${{ secrets.PROXY_PASSWORD }}@isproxy.ifpen.fr:8082
-  HTTP_PROXY: http://${{ secrets.PROXY_USERNAME }}:${{ secrets.PROXY_PASSWORD }}@isproxy.ifpen.fr:8082
-
   PIP_EXTRA_INDEX_URL_OVERRIDE: "https://nexus.fastit.dev/repository/fast-it/simple https://nexus.ifpen.fr/repository/fast-it/simple"
 
 
@@ -23,6 +19,10 @@ jobs:
     runs-on: self-hosted
     container:
       image: harbor.ifpen.fr/fast-it/python:${{ vars.PYTHON_VERSION }}-slim
+      env:
+        NO_PROXY: .ifp.fr,.ifpen.fr,localhost,127.0.0.1
+        HTTPS_PROXY: http://${{ secrets.PROXY_USERNAME }}:${{ secrets.PROXY_PASSWORD }}@isproxy.ifpen.fr:8082
+        HTTP_PROXY: http://${{ secrets.PROXY_USERNAME }}:${{ secrets.PROXY_PASSWORD }}@isproxy.ifpen.fr:8082
     if: github.ref != 'refs/heads/develop' || github.event_name != 'workflow_dispatch'
     steps:
       - name: Setup proxy
