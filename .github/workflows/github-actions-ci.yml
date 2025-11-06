@@ -21,14 +21,14 @@ jobs:
       image: harbor.ifpen.fr/fast-it/python:${{ vars.PYTHON_VERSION }}-slim
       env:
         no_proxy: .ifp.fr,.ifpen.fr,localhost,127.0.0.1
-        HTTPS_PROXY: http://irproxy.ifpen.fr:8082
-        HTTP_PROXY: http://irproxy.ifpen.fr:8082
+        HTTPS_PROXY: http://${{ secrets.PROXY_USERNAME }}:${{ secrets.PROXY_PASSWORD }}@irproxy.ifpen.fr:8082
+        HTTP_PROXY: http://${{ secrets.PROXY_USERNAME }}:${{ secrets.PROXY_PASSWORD }}@irproxy.ifpen.fr:8082
     if: github.ref != 'refs/heads/develop' || github.event_name != 'workflow_dispatch'
     steps:
       - name: Setup proxy
         run: |
-          export http_proxy="http://irproxy.ifpen.fr:8082"
-          export https_proxy="http://irproxy.ifpen.fr:8082"
+          export http_proxy="http://${{ secrets.PROXY_USERNAME }}:${{ secrets.PROXY_PASSWORD }}@irproxy.ifpen.fr:8082"
+          export https_proxy="http://${{ secrets.PROXY_USERNAME }}:${{ secrets.PROXY_PASSWORD }}@irproxy.ifpen.fr:8082"
           git config --global http.proxy "$HTTP_PROXY"
           git config --global https.proxy "$HTTPS_PROXY"
       - name: Clone the repository
