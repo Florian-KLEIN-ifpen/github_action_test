@@ -1,5 +1,6 @@
 # Definition des variables du CI/CD
-variables:
+variables:  
+  PIP_EXTRA_INDEX_URL_OVERRIDE: "https://nexus.fastit.dev/repository/fast-it/simple https://nexus.ifpen.fr/repository/fast-it/simple"
   PYTHON_VERSION: "3.12"
   UPLOAD_REPOSITORY: "https://nexus.ifpen.fr/repository/fast-it/"
   PYTHON_PATH: "src"
@@ -8,15 +9,108 @@ variables:
   PROJECT_ID: $CI_PROJECT_ID
   PROJECT_NAME: $CI_PROJECT_NAME
 
-include:
-  - project: 'fast-it/ci-cd/templates-ci-cd'
-    file: '/ruff_guardian.yml'
-  - project: 'fast-it/ci-cd/templates-ci-cd'
-    file: '/pytest.yml'
-  - project: 'fast-it/ci-cd/templates-ci-cd'
-    file: '/sphinx_python_generator.yml'
-  - project: 'fast-it/ci-cd/templates-ci-cd'
-    file: '/py_package_uploader.yml'
+ruff_guardian:
+  tags:
+  - docker-fastit
+  image: harbor.ifpen.fr/fast-it/python:$PYTHON_VERSION-slim
+  stage: ruff_guardian
+  before_script:
+    - pip install ruff
+  script:
+    - if ! ruff format --check .; then ruff format .; false; fi
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_PIPELINE_SOURCE == "api"'
+      when: never
+    - when: always
+
+pytest:
+  tags:
+    - docker-fastit
+  image: python:$PYTHON_VERSION-slim
+  stage: pytest
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
+  before_script:
+    - export PIP_EXTRA_INDEX_URL="${PIP_EXTRA_INDEX_URL_OVERRIDE}"
+    - apt-get update
+    - apt-get install -y git
+    - pip install --upgrade pip
+    - pip install pytest build pytest-cov
+    - rm -rf dist/*
+    - python -m build
+    - pip install dist/*.whl
+  script:
+    - pytest -s -o cache_dir=/tmp/.pytest_cache --junitxml="report.xml"
+    - pytest -s -o cache_dir=/tmp/.pytest_cache --cov --cov-report term --cov-report xml:"coverage.xml" --cov-report html:"coverage.html"
+  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_PIPELINE_SOURCE == "api"'
+      when: never
+    - when: always
+
+pages:
+  image:  harbor.ifpen.fr/fast-it/python:$PYTHON_VERSION-slim
+  tags:
+    - docker-fastit
+  stage: pages
+  before_script:
+    - export PIP_EXTRA_INDEX_URL="${PIP_EXTRA_INDEX_URL_OVERRIDE}"
+    - pip install sphinx sphinx_design myst_parser furo sphinx_autopackagesummary sphinxcontrib-napoleon sphinx-rtd-theme numpydoc
+    - pip install '.'
+  script:
+    - rm -rf ./public/*
+    - sphinx-apidoc -f -o sphinx $PYTHON_PATH
+    - sphinx-build -b html ./sphinx ./public
+  artifacts:
+    name: 'documentation'
+    paths:
+      - public
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop" && $CI_PIPELINE_SOURCE == "api"'
+      when: never
+    - if: ($CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_BRANCH != "sed") || ($CI_COMMIT_BRANCH == "develop" && $CI_COMMIT_BEFORE_SHA == "0000000000000000000000000000000000000000")
+
+py_package_uploader:
+  tags:
+    - docker-fastit
+  image: python:$PYTHON_VERSION-slim
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
+  stage: py_package_uploader
+  before_script:
+    - pip install --upgrade pip
+    - pip install twine setuptools wheel build
+    - apt-get update
+    - apt-get install -y git
+  script:
+    - VERSION=$(grep -Po "(?<=^version = ['\"])[^'\"]*" pyproject.toml | head -n 1)
+    - TIMESTAMP=$(date +%Y%m%d%H%M%S)
+    - if [ "$CI_COMMIT_BRANCH" == "develop" ]; then
+        export CI_COMMIT_TAG="$VERSION-dev.$TIMESTAMP";
+      elif [[ "$CI_COMMIT_BRANCH" =~ ^release/[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        export CI_COMMIT_TAG="$VERSION-rc.$TIMESTAMP";
+      fi
+    - sed -i s/'name = "package_name"'/'name = '\"$CI_PROJECT_NAME\"/g pyproject.toml
+    - sed -i "s/version = ['\"][0-9]*\.[0-9]*\.[0-9]*['\"]/version = '$CI_COMMIT_TAG'/g" pyproject.toml
+    - rm -rf dist/*
+    - python -m build
+    - twine upload --repository-url $UPLOAD_REPOSITORY dist/* -u $FASTIT_NEXUS_USERNAME -p $FASTIT_NEXUS_PASSWORD
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: '$CI_COMMIT_BRANCH =~ /^release\/[0-9]+\.[0-9]+\.[0-9]+$/'
+    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_COMMIT_BRANCH == "develop2"
 
 stages:
   - ruff_guardian
