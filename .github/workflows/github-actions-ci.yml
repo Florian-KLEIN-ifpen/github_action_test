@@ -122,7 +122,6 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
-          grep -R "license-file" dist || echo "No reference to license file"
           twine check dist/*
           twine upload dist/*
   

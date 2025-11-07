@@ -34,6 +34,7 @@ local_scheme = "dirty-tag"
 
 [tool.setuptools]
 py-modules = []
+license-files = []
 
 [tool.ruff]
 # Set the maximum line length to 140.
