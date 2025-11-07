@@ -11,7 +11,8 @@ on:
   pull_request:
 
 env:
-  PIP_EXTRA_INDEX_URL_OVERRIDE: "https://nexus.fastit.dev/repository/fast-it/simple"
+  PIP_EXTRA_INDEX_URL: "https://nexus.fastit.dev/repository/fast-it/simple"
+  PYTHON_PATH: "src"
 
 
 jobs:
@@ -36,8 +37,6 @@ jobs:
     needs: ruff_guardian
     steps:
       - uses: actions/checkout@v3
-      - name: Set PIP extra index
-        run: echo "PIP_EXTRA_INDEX_URL=${{ env.PIP_EXTRA_INDEX_URL_OVERRIDE }}" >> $GITHUB_ENV
       - name: Install dependencies
         run: |
           apt-get update
@@ -62,3 +61,45 @@ jobs:
 #            coverage.xml
 #            coverage.html
 #            dist/
+  build-pages:
+    runs-on: ubuntu-latest
+    needs: pytest
+    if: github.ref == 'refs/heads/main' && github.event_name != 'workflow_dispatch'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+      - name: Install sphinx
+        run: |
+          pip install sphinx sphinx_design myst_parser furo sphinx_autopackagesummary sphinxcontrib-napoleon sphinx-rtd-theme numpydoc
+          pip install '.'
+      - name: Build Sphinx documentation
+        run: |
+          rm -rf ./public/*
+          sphinx-apidoc -f -o sphinx $PYTHON_PATH
+          sphinx-build -b html ./sphinx ./public
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./public
+
+  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-pages
+    if: github.ref == 'refs/heads/main' && github.event_name != 'workflow_dispatch'
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v4
