@@ -80,10 +80,34 @@ jobs:
             report.xml
             coverage.xml
             coverage.html
-    
+  
+  check-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone the repository
+        uses: actions/checkout@v3
+      - name: Check package version
+        run: |
+          PACKAGE_VERSION=$(cat pyproject.toml | grep -e "version = '.*'" | cut -d "'" -f 2)
+          PACKAGE_NAME=$(cat pyproject.toml | grep '^name = ' | cut -d '=' -f 2 | xargs)
+          ALL_VERSION=$(pip index versions $PACKAGE_NAME 2>/dev/null | grep -i 'Available versions:' | cut -d ':' -f 2 | tr ',' ' ' | xargs)
+
+          if [  "$ALL_VERSION" = "" ]; then
+            echo "No versions found on PyPI. Proceeding with publish."
+            exit 0
+          fi
+
+          for ver in $ALL_VERSION; do
+            if [ "$ver" = "$PACKAGE_VERSION" ]; then
+              echo "Version $PACKAGE_VERSION already exists on PyPI. Aborting publish."
+              exit 1
+            fi
+          done
+          echo "Version $PACKAGE_VERSION does not exist on PyPI. Proceeding with publish."
+
   upload-on-pipy:
     runs-on: ubuntu-latest
-    needs: [build, pytest]
+    needs: [pytest, check-version]
     if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'workflow_dispatch' && vars.PUBLISH_TO_PYPI == 'true' }}
     steps:
       - name: Download build artifacts
@@ -91,6 +115,14 @@ jobs:
         with:
           name: build-artifacts
           path: dist/
+      - name: Install twine
+        run: pip install twine
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          twine upload dist/*
   
   build-pages:
     runs-on: ubuntu-latest
