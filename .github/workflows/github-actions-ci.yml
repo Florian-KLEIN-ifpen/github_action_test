@@ -84,7 +84,7 @@ jobs:
   upload-on-pipy:
     runs-on: ubuntu-latest
     needs: [build, pytest]
-    if: github.ref == 'refs/heads/main' && github.event_name != 'workflow_dispatch'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'workflow_dispatch' && ${{ vars.PUBLISH_TO_PYPI }} == 'true'
     steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
