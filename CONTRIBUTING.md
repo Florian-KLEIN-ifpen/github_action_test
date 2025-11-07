@@ -109,7 +109,7 @@ The file `pyproject.toml` is the cornerstone of your Python package configuratio
 
 ```toml
 [project]
-name = "mobidec_template_for_github"
+name = "python_package_template"
 version = "0.0.0"
 authors = [
   { name = "AUTHOR", email = "author@example.com" }
@@ -283,14 +283,14 @@ auto docstring for package
 
    This is my package.
 
-   .. autopackagesummary:: mobidec_template_for_github
-      :toctree: mobidec_template_for_github
+   .. autopackagesummary:: python_package_template
+      :toctree: python_package_template
       :template: autosummary/package.rst
 
 .. toctree::
    :glob:
 
-   mobidec_template_for_github/*
+   python_package_template/*
  ```
 
 #### Compilation
@@ -309,9 +309,9 @@ Before merging into `develop`, ensure that your package is working correctly by 
 ```bash
 pip install build
 python -m build
-pip install dist/mobidec_template_for_github-0.0.0-py3-none-any.whl
+pip install dist/python_package_template-0.0.0-py3-none-any.whl
 pytest
 ```
 
-Replace `mobidec_template_for_github` with the name of your repository. Once installed, the package becomes part of your dependencies, and you can use it in your code with `import mobidec_template_for_github` or `from mobidec_template_for_github import module`.
+Replace `python_package_template` with the name of your repository. Once installed, the package becomes part of your dependencies, and you can use it in your code with `import python_package_template` or `from python_package_template import module`.
 

@@ -55,7 +55,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath('../src'))
 
-project = 'mobidec_template_for_github'
+project = 'python_package_template'
 author = 'author'
 release = '0.0.0'
 

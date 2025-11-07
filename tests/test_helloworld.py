@@ -1,4 +1,4 @@
-from mobidec_template_for_github import hello_world
+from python_package_template import hello_world
 
 
 def test_hello_world():

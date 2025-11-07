@@ -1,4 +1,4 @@
-Welcome to mobidec_template_for_github's documentation!
+Welcome to python_package_template's documentation!
 ============================================
 
 .. toctree::

@@ -1,5 +1,5 @@
 [project]
-name = "mobidec_template_for_github"
+name = "python_package_template"
 version = '0.0.0'
 authors = [
 ]
@@ -20,7 +20,7 @@ dependencies = [
     # ajouter les dépendances necessaires
 ]
 
-[tool.mobidec_template_for_github]
+[tool.python_package_template]
 version = "1.0.2"
 
 [tool.setuptools.packages.find]

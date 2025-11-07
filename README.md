@@ -1,4 +1,4 @@
-# mobidec_template_for_github
+# python_package_template
 
 <img src="doc/assets/ifpen.jpg" alt="logo">
 
@@ -29,7 +29,7 @@ This package includes:
 │   └── index.rst
 │       └── Root file for Sphinx documentation, structuring and linking source documents into complete documentation.
 ├── src
-│   └── mobidec_template_for_github
+│   └── python_package_template
 │        ├── __init__.py
 │        ├── main.py
 │        │   └── Main file of your package, it references what is usable in your package
@@ -102,17 +102,17 @@ For more details on contributing and best practices, please refer to the `CONTRI
 If you are using the provided `pip.conf`, you can simply run:
 
 ```bash
-pip install mobidec_template_for_github
+pip install python_package_template
 ```
 
 Otherwise, you can specify the package index depending on whether you are in an internal (on-premise) or external (cloud) environment.
 
 ```bash
 # On-premise
-pip install mobidec_template_for_github --extra-index-url https://nexus.ifpen.fr/repository/fast-it/simple
+pip install python_package_template --extra-index-url https://nexus.ifpen.fr/repository/fast-it/simple
 
 # On Cloud
-pip install mobidec_template_for_github --extra-index-url https://nexus.fastit.dev/repository/fast-it/simple
+pip install python_package_template --extra-index-url https://nexus.fastit.dev/repository/fast-it/simple
 ```
 
 Alternatively, you can set the package index URL as an environment variable:
