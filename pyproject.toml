@@ -20,6 +20,8 @@ dependencies = [
     # ajouter les dépendances necessaires
 ]
 
+license = { text = "MIT" }
+
 [tool.python_package_template]
 version = "1.0.2"
 
