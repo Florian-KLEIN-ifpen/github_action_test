@@ -11,14 +11,14 @@ on:
   pull_request:
 
 env:
-  PIP_EXTRA_INDEX_URL_OVERRIDE: "https://nexus.fastit.dev/repository/fast-it/simple https://nexus.ifpen.fr/repository/fast-it/simple"
+  PIP_EXTRA_INDEX_URL_OVERRIDE: "https://nexus.fastit.dev/repository/fast-it/simple"
 
 
 jobs:
   ruff_guardian:
     runs-on: ubuntu-latest
     container:
-      image: python:3.12.12-slim
+      image: python:${{ vars.PYTHON_VERSION }}-slim
     if: github.ref != 'refs/heads/develop' || github.event_name != 'workflow_dispatch'
     steps:
       - name: Clone the repository
@@ -29,30 +29,30 @@ jobs:
         run: |
           if ! ruff format --check .; then ruff format .; false; fi
 
-#  pytest:
-#    runs-on: ubuntu-latest
-#    container:
-#      image: python:${{ env.PYTHON_VERSION }}-slim
-#    needs: ruff_guardian
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Set PIP extra index
-#        run: echo "PIP_EXTRA_INDEX_URL=${{ env.PIP_EXTRA_INDEX_URL_OVERRIDE }}" >> $GITHUB_ENV
-#      - name: Install dependencies
-#        run: |
-#          apt-get update
-#          apt-get install -y git
-#          pip install --upgrade pip
-#          pip install pytest build pytest-cov
-#      - name: Build package
-#        run: |
-#          rm -rf dist/*
-#          python -m build
-#          pip install dist/*.whl
-#      - name: Run tests
-#        run: |
-#          pytest -s -o cache_dir=/tmp/.pytest_cache --junitxml="report.xml"
-#          pytest -s -o cache_dir=/tmp/.pytest_cache --cov --cov-report term --cov-report xml:"coverage.xml" --cov-report html:"coverage.html"
+  pytest:
+    runs-on: ubuntu-latest
+    container:
+      image: python:${{ vars.PYTHON_VERSION }}-slim
+    needs: ruff_guardian
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set PIP extra index
+        run: echo "PIP_EXTRA_INDEX_URL=${{ env.PIP_EXTRA_INDEX_URL_OVERRIDE }}" >> $GITHUB_ENV
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y git
+          pip install --upgrade pip
+          pip install pytest build pytest-cov
+      - name: Build package
+        run: |
+          rm -rf dist/*
+          python -m build
+          pip install dist/*.whl
+      - name: Run tests
+        run: |
+          pytest -s -o cache_dir=/tmp/.pytest_cache --junitxml="report.xml"
+          pytest -s -o cache_dir=/tmp/.pytest_cache --cov --cov-report term --cov-report xml:"coverage.xml" --cov-report html:"coverage.html"
 #      - name: Upload test artifacts
 #        uses: actions/upload-artifact@v3
 #        with:
@@ -62,4 +62,3 @@ jobs:
 #            coverage.xml
 #            coverage.html
 #            dist/
-#
