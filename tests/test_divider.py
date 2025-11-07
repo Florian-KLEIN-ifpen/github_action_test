@@ -1,5 +1,5 @@
 import pytest
-from python_package_template.divider import CantDivideByZeroError, divide
+from test_mobidec_python_package_template.divider import CantDivideByZeroError, divide
 
 
 def test_devide_by_zero():
