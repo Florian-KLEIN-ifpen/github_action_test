@@ -1,4 +1,4 @@
-Welcome to test_mobidec_python_package_template's documentation!
+Welcome to quickstart's documentation!
 ============================================
 
 .. toctree::

@@ -1,5 +1,5 @@
 [project]
-name = "test_mobidec_python_package_template"
+name = "quickstart"
 version = '0.0.0'
 authors = [
 ]
@@ -22,7 +22,7 @@ dependencies = [
 
 license = { file = "LICENSE" }
 
-[tool.test_mobidec_python_package_template]
+[tool.quickstart]
 version = "1.0.2"
 
 [tool.setuptools.packages.find]

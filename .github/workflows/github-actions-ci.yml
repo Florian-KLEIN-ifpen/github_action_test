@@ -18,6 +18,7 @@ env:
 jobs:
   ruff_guardian:
     runs-on: ubuntu-latest
+    if: github.event.repository.fork == false
     steps:
       - name: Clone the repository
         uses: actions/checkout@v3
@@ -83,6 +84,7 @@ jobs:
   
   check-version:
     runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' && vars.PUBLISH_TO_PYPI == 'true' }}
     steps:
       - name: Clone the repository
         uses: actions/checkout@v3
@@ -108,7 +110,6 @@ jobs:
   upload-on-pipy:
     runs-on: ubuntu-latest
     needs: [pytest, check-version]
-    if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'workflow_dispatch' && vars.PUBLISH_TO_PYPI == 'true' }}
     steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -124,43 +125,3 @@ jobs:
         run: |
           twine check dist/*
           twine upload dist/*
-  
-  build-pages:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name != 'workflow_dispatch'
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v3
-      - name: Install sphinx
-        run: |
-          pip install sphinx sphinx_design myst_parser furo sphinx_autopackagesummary sphinxcontrib-napoleon sphinx-rtd-theme numpydoc
-          pip install '.'
-      - name: Build Sphinx documentation
-        run: |
-          rm -rf ./public/*
-          sphinx-apidoc -f -o sphinx $PYTHON_PATH
-          sphinx-build -b html ./sphinx ./public
-      - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./public
-
-  
-  deploy-pages:
-    runs-on: ubuntu-latest
-    needs: build-pages
-    if: github.ref == 'refs/heads/main' && github.event_name != 'workflow_dispatch'
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-        - name: Deploy to GitHub Pages
-          id: deployment
-          uses: actions/deploy-pages@v4

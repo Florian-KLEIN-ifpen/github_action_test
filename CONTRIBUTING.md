@@ -109,7 +109,7 @@ The file `pyproject.toml` is the cornerstone of your Python package configuratio
 
 ```toml
 [project]
-name = "test_mobidec_python_package_template"
+name = "quickstart"
 version = "0.0.0"
 authors = [
   { name = "AUTHOR", email = "author@example.com" }
@@ -283,14 +283,14 @@ auto docstring for package
 
    This is my package.
 
-   .. autopackagesummary:: test_mobidec_python_package_template
-      :toctree: test_mobidec_python_package_template
+   .. autopackagesummary:: quickstart
+      :toctree: quickstart
       :template: autosummary/package.rst
 
 .. toctree::
    :glob:
 
-   test_mobidec_python_package_template/*
+   quickstart/*
  ```
 
 #### Compilation
@@ -309,9 +309,9 @@ Before merging into `develop`, ensure that your package is working correctly by 
 ```bash
 pip install build
 python -m build
-pip install dist/test_mobidec_python_package_template-0.0.0-py3-none-any.whl
+pip install dist/quickstart-0.0.0-py3-none-any.whl
 pytest
 ```
 
-Replace `test_mobidec_python_package_template` with the name of your repository. Once installed, the package becomes part of your dependencies, and you can use it in your code with `import test_mobidec_python_package_template` or `from test_mobidec_python_package_template import module`.
+Replace `quickstart` with the name of your repository. Once installed, the package becomes part of your dependencies, and you can use it in your code with `import quickstart` or `from quickstart import module`.
 
