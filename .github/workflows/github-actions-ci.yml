@@ -12,7 +12,6 @@ on:
 
 env:
   PIP_EXTRA_INDEX_URL: "https://nexus.fastit.dev/repository/fast-it/simple"
-  PYTHON_PATH: "src"
 
 
 jobs:

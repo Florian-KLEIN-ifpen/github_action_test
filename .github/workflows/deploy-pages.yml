@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+env:
+  PYTHON_PATH: "src"
+
 jobs:
   build-pages:
     runs-on: ubuntu-latest

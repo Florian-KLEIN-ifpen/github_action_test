@@ -22,6 +22,9 @@ jobs:
         run: |
           find . -type f -print0 | xargs -0 -I {} sed -i "s/quickstart/$REPO_NAME/g" {}
           mv src/quickstart src/$REPO_NAME
+      - name: Delete this file
+        run: |
+          rm -f .github/workflows/rename.yml
       - name: Commit and push changes
         run: |
           git config --global user.name 'github-actions[bot]'
